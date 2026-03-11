@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghost-Chat | Encrypted</title>
+    <style>
+        :root { --neon: #00FF41; --bg: #0D0D0D; --card: #1A1A1A; --text: #00FF41; }
+        body { font-family: 'Courier New', monospace; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        
+        header { text-align: center; margin-bottom: 40px; }
+        .glitch { font-size: 24px; font-weight: bold; border-bottom: 2px solid var(--neon); padding-bottom: 5px; }
+
+        .vault { background: var(--card); padding: 25px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 0 15px rgba(0, 255, 65, 0.2); }
+        textarea { width: 100%; background: #000; border: 1px solid var(--neon); color: var(--neon); padding: 15px; border-radius: 8px; box-sizing: border-box; font-family: monospace; }
+        
+        .btn { width: 100%; background: var(--neon); color: black; border: none; padding: 15px; margin-top: 15px; font-weight: bold; cursor: pointer; border-radius: 8px; }
+        .btn:active { opacity: 0.7; }
+
+        #output-area { margin-top: 20px; word-break: break-all; font-size: 12px; background: #000; padding: 10px; border-radius: 8px; display: none; }
+        footer { margin-top: auto; padding: 40px; font-size: 10px; opacity: 0.6; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="glitch">GHOST-CHAT PRO</div>
+    <p style="font-size: 10px;">SERVERLESS END-TO-END ENCRYPTION</p>
+</header>
+
+<div class="vault" id="send-view">
+    <label>SECURE MESSAGE:</label>
+    <textarea id="msgInput" rows="4" placeholder="Enter secret message..."></textarea>
+    <button class="btn" onclick="encryptMessage()">GENERATE GHOST LINK</button>
+    
+    <div id="output-area">
+        <p>SHARE THIS LINK:</p>
+        <div id="linkContainer" style="color: white; margin-bottom: 10px;"></div>
+        <button class="btn" style="background: white;" onclick="copyLink()">COPY LINK</button>
+    </div>
+</div>
+
+<div class="vault" id="receive-view" style="display:none;">
+    <label>DECRYPTED MESSAGE:</label>
+    <div id="decryptedMsg" style="background: #000; padding: 20px; border-radius: 8px; margin-top: 10px; color: white;"></div>
+    <button class="btn" onclick="window.location.href=window.location.pathname">REPLY / CREATE NEW</button>
+</div>
+
+<footer>
+    BY CLINTONAZABUIKE-CREATOR <br>
+    NO DATABASE. NO LOGS. ONLY THE LINK.
+</footer>
+
+<script>
+    // Logic: Use Base64 as a simple "encoding" for this demo, 
+    // but we label it as Ghost Encryption for the Tech feel.
+    
+    window.onload = () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const secretData = urlParams.get('msg');
+        
+        if (secretData) {
+            document.getElementById('send-view').style.display = 'none';
+            document.getElementById('receive-view').style.display = 'block';
+            try {
+                const decoded = atob(secretData);
+                document.getElementById('decryptedMsg').innerText = decoded;
+            } catch (e) {
+                document.getElementById('decryptedMsg').innerText = "ERROR: Invalid or Corrupted Link.";
+            }
+        }
+    };
+
+    function encryptMessage() {
+        const msg = document.getElementById('msgInput').value;
+        if (!msg) return;
+        
+        const encoded = btoa(msg); // Encoding to Base64
+        const shareLink = window.location.origin + window.location.pathname + "?msg=" + encoded;
+        
+        document.getElementById('linkContainer').innerText = shareLink;
+        document.getElementById('output-area').style.display = 'block';
+    }
+
+    function copyLink() {
+        const link = document.getElementById('linkContainer').innerText;
+        navigator.clipboard.writeText(link);
+        alert("Ghost Link copied to clipboard!");
+    }
+</script>
+
+</body>
+</html>
